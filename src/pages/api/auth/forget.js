@@ -30,11 +30,11 @@ export default async function handler(req, res) {
 
         const newForget = new Forget(forget);
         await newForget.save();
-        
+
         await sendEmail(
             user.email,
             'Reset your password',
-            `<p>You requested to reset your password. Click the link below to reset it.</p><p><a href="http://localhost:3000/reset-password/${token}">Reset Password</a></p>`,
+            `<p>You requested to reset your password. Click the link below to reset it.</p><p><a href="https://auth.blue-dev.xyz/reset-password/${token}">Reset Password</a></p>`,
         );
 
         res.status(200).json({ message: 'Email sent successfully' });
