@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
 export default async function sendEmail(email, subject, html) {
-  console.log(`Sending email to ${email}...`);
+  //console.log(`Sending email to ${email}...`);
   const transporter = nodemailer.createTransport({
     host: 'smtp.hostinger.com',
     port: 465, 
