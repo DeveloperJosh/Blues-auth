@@ -19,6 +19,11 @@ export default async function handler(req, res) {
             return res.status(400).json({ message: 'User not found' });
         }
 
+        const existingForget = await Forget.findOne({ email });
+        if (existingForget) {
+            await Forget.deleteOne({ email });
+        }
+
         const token = crypto.randomBytes(32).toString('hex');
         const expire = new Date(Date.now() + 3600000); // 1 hour
 
@@ -34,7 +39,7 @@ export default async function handler(req, res) {
         await sendEmail(
             user.email,
             'Reset your password',
-            `<p>You requested to reset your password. Click the link below to reset it.</p><p><a href="https://auth.blue-dev.xyz/reset-password/${token}">Reset Password</a></p>`,
+            `<p>You requested to reset your password. Click the link below to reset it.</p><p><a href="https://auth.blue-dev.xyz/auth/reset-password/${token}">Reset Password</a></p>`,
         );
 
         res.status(200).json({ message: 'Email sent successfully' });
