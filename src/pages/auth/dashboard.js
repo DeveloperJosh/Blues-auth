@@ -129,7 +129,7 @@ export default function Dashboard() {
             <FaFileInvoiceDollar />
             <span>Invoices</span>
           </a>
-          <a href="/logout" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          <a href="/auth/logout" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaFileInvoiceDollar />
             <span>Logout</span>
           </a>

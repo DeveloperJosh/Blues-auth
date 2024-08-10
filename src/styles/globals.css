@@ -31,3 +31,71 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Add these styles in your global CSS or in a component-level style tag */
+@keyframes stars {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-1000px); }
+}
+
+@keyframes twinkling {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes moving-clouds {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-1000px); }
+}
+
+body {
+  background: #000;
+  overflow: hidden;
+}
+
+.starry-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+}
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2000px;
+  background: transparent url('/stars.png') repeat top center;
+  z-index: 1;
+  animation: stars 50s linear infinite;
+}
+
+.twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent url('/twinkling.png') repeat top center;
+  z-index: 2;
+  animation: twinkling 200s linear infinite;
+}
+
+.clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent url('/clouds.png') repeat-x;
+  z-index: 3;
+  animation: moving-clouds 200s linear infinite;
+}

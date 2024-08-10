@@ -34,11 +34,9 @@ export default async function handler(req, res) {
       { expiresIn: '1h' }
     );
 
-    // Capture device info using useragent
     const agent = useragent.parse(req.headers['user-agent']);
     const deviceInfo = `${agent.family} on ${agent.os.family}`;
 
-    // Capture IP address
     const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     res.status(200).json({ token });
     await sendEmail(
