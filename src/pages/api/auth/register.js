@@ -33,11 +33,11 @@ export default async function handler(req, res) {
     const newUser = new User(user);
     await newUser.save();       
     res.status(201).json({ message: 'User registered successfully' });
-    await sendEmail({
-        to: email,
-        subject: "Welcome to Blue's Auth",
-        text: `Hello ${username},\n\nWelcome to Blue's Auth!\n\nYou have successfully registered with the email ${email}.`,
-      }); 
+    await sendEmail(
+        email,
+        "Welcome to Blue's Auth",
+        `Hello ${username},\n\nWelcome to Blue's Auth!\n\nYou have successfully registered with the email ${email}.`,
+      ); 
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

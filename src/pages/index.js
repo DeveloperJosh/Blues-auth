@@ -28,7 +28,7 @@ export default function Home() {
         toast.success('Login successful! Redirecting to dashboard...');
         setTimeout(() => {
           router.push('/auth/dashboard');
-        }, 1500);
+        }, 1000);
       } else {
         toast.error(data.message || 'Failed to login');
       }

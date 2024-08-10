@@ -44,7 +44,6 @@ export default async function handler(req, res) {
         "Login Notification", 
         `New Login Detected<br><br>Device: ${deviceInfo}<br><br>IP Address: ${ipAddress}`
       );
-  
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
