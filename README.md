@@ -1,8 +1,11 @@
-# Todo 
+# To Do
 
-Add forget password functionality to the login page.
+- Implement an authentication API that other pages can access using an API key.
 
-# Done
+# Completed
 
-Add a login page.
-Add a register page.
+- Added login page.
+- Added registration page.
+- Added forgot password page.
+- Added reset password functionality.
+- Added show/hide password feature.
