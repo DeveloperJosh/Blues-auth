@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -62,7 +63,7 @@ export default function ForgotPassword() {
           </button>
         </form>
         <div className="mt-4 text-center">
-          <a href="/" className="text-sm text-gray-400 hover:text-white">Back to Login</a>
+          <Link href="/" className="text-sm text-gray-400 hover:text-white">Back to Login</Link>
         </div>
       </div>
       <ToastContainer />

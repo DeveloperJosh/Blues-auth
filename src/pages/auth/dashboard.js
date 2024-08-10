@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { FaHome, FaWallet, FaCreditCard, FaExchangeAlt, FaLayerGroup, FaPuzzlePiece, FaUserFriends, FaFileInvoiceDollar } from 'react-icons/fa';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -97,42 +98,42 @@ export default function Dashboard() {
           </div>
         </div>
         <nav className="space-y-4">
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaHome />
             <span>Dashboard</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaWallet />
             <span>Accounts</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaCreditCard />
             <span>Cards</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaExchangeAlt />
             <span>Transaction</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaLayerGroup />
             <span>Spend Groups</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaPuzzlePiece />
             <span>Integrations</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaUserFriends />
             <span>Payees</span>
-          </a>
-          <a href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="#" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaFileInvoiceDollar />
             <span>Invoices</span>
-          </a>
-          <a href="/auth/logout" className="flex items-center text-gray-400 hover:text-white space-x-3">
+          </Link>
+          <Link href="/auth/logout" className="flex items-center text-gray-400 hover:text-white space-x-3">
             <FaFileInvoiceDollar />
             <span>Logout</span>
-          </a>
+          </Link>
         </nav>
       </div>
 

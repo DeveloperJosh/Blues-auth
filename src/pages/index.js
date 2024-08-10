@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -71,10 +72,10 @@ export default function Home() {
           </button>
         </form>
         <div className="mt-4 text-center">
-          <a href="/auth/forgot-password" className="text-sm text-gray-400 hover:text-white">Forgot Password?</a>
+          <Link href="/auth/forgot-password" className="text-sm text-gray-400 hover:text-white">Forgot Password?</Link>
         </div>
         <div className="mt-4 text-center">
-          <a href="/auth/signup" className="text-sm text-gray-400 hover:text-white">Sign Up</a>
+          <Link href="/auth/signup" className="text-sm text-gray-400 hover:text-white">Sign Up</Link>
         </div>
       </div>
       <ToastContainer />
