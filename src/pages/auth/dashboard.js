@@ -30,7 +30,7 @@ export default function Dashboard() {
       fetch('/api/user/me', {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => res.json())
@@ -46,7 +46,7 @@ export default function Dashboard() {
           toast.error('An unexpected error occurred');
         });
     }
-  }, [router, activeTab]); 
+  }, [router, activeTab]);
 
   const handleLogout = () => {
     toast.success('Logged out successfully!');
@@ -63,7 +63,7 @@ export default function Dashboard() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: user.email }),
     })
@@ -71,7 +71,9 @@ export default function Dashboard() {
       .then((data) => {
         if (data.secret) {
           setTwoFactorSecret(data.secret);
-          toast.success('2FA setup successful! Scan the QR code or enter the secret key in your authenticator app.');
+          toast.success(
+            '2FA setup successful! Scan the QR code or enter the secret key in your authenticator app.'
+          );
         } else {
           toast.error('Failed to setup 2FA');
         }
@@ -90,7 +92,7 @@ export default function Dashboard() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: user.email }),
     })
@@ -114,7 +116,13 @@ export default function Dashboard() {
       case 'home':
         return <div>Welcome to the Home section!</div>;
       case 'profile':
-        return <div>Coming Soon</div>;
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Profile</h2>
+            <p>Username: {user?.username}</p>
+            <p>Email: {user?.email}</p>
+          </div>
+        );
       case 'settings':
         return (
           <div>
@@ -144,7 +152,9 @@ export default function Dashboard() {
                     <p>Secret Key:</p>
                     <code>{twoFactorSecret}</code>
                     <p className="text-sm text-gray-400">
-                      Enter this key in your authenticator app. Once you refresh the page, you will be able to disable 2FA, but you won&apos;t be able to see the secret key again.
+                      Enter this key in your authenticator app. Once you refresh
+                      the page, you will be able to disable 2FA, but you
+                      won&apos;t be able to see the secret key again.
                     </p>
                   </div>
                 )}
@@ -221,7 +231,9 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 p-6">
-        <h1 className="text-3xl font-bold">Welcome, {user?.username || 'User'}!</h1>
+        <h1 className="text-3xl font-bold">
+          Welcome, {user?.username || 'User'}!
+        </h1>
         <p className="mt-4">
           Welcome to the dashboard! Here you can manage your account settings.
         </p>
