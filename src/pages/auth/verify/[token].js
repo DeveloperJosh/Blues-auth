@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Link from 'next/link';
 
 export default function Verify() {
     const router = useRouter();
@@ -14,37 +13,37 @@ export default function Verify() {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        const verifyToken = async () => {
+            try {
+                const response = await fetch('/api/auth/verification/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    setMessage(data.message);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                setMessage(data.message);
+                toast.success(data.message);
+            } catch (err) {
+                setError(err.message || 'An error occurred');
+                toast.error(err.message || 'An error occurred');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (token) {
             verifyToken();
         }
     }, [token]);
-
-    const verifyToken = async () => {
-        try {
-            const response = await fetch('/api/auth/verification/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setMessage(data.message);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            setMessage(data.message);
-            toast.success(data.message);
-        } catch (err) {
-            setError(err.message || 'An error occurred');
-            toast.error(err.message || 'An error occurred');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-900 to-black">

@@ -144,7 +144,7 @@ export default function Dashboard() {
                     <p>Secret Key:</p>
                     <code>{twoFactorSecret}</code>
                     <p className="text-sm text-gray-400">
-                      Enter this key in your authenticator app. Once you refresh the page, you will be able to disable 2FA, but you won't be able to see the secret key again.
+                      Enter this key in your authenticator app. Once you refresh the page, you will be able to disable 2FA, but you won&apos;t be able to see the secret key again.
                     </p>
                   </div>
                 )}
