@@ -13,14 +13,18 @@ export const authenticate = async (req, res, next) => {
     await dbConnect();
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.userId).select('username email');
+    req.user = await User.findById(decoded.userId).select('username email twoFactorEnabled');
     //console.log(req.user);
 
     if (!req.user) {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    next();
+    if (typeof next === 'function') {
+      return next();
+    } else {
+      return res.status(500).json({ message: 'Unexpected behavior' });
+    }
   } catch (error) {
     res.status(401).json({ message: 'Token is not valid' });
   }

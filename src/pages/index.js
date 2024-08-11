@@ -4,21 +4,57 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import TwoFactorModal from '@/components/TwoFactorModal';
 
 export default function Home() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState(''); 
   const [showPassword, setShowPassword] = useState(false);
+  const [twoFactorToken, setTwoFactorToken] = useState('');
+  const [is2FAModalOpen, setIs2FAModalOpen] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    
+
+    try {
+      const body = { email, password };
+
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data.requires2FA) {
+          setIs2FAModalOpen(true);
+          toast.info('Enter your 2FA code');
+        } else {
+          localStorage.setItem('token', data.token);
+          toast.success('Login successful! Redirecting to dashboard...');
+          setTimeout(() => {
+            router.push('/auth/dashboard');
+          }, 1000);
+        }
+      } else {
+        toast.error(data.message || 'Failed to login');
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+    }
+  };
+
+  const handle2FASubmit = async (e) => {
+    e.preventDefault();
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, twoFactorToken }),
       });
 
       const data = await res.json();
@@ -30,10 +66,12 @@ export default function Home() {
           router.push('/auth/dashboard');
         }, 1000);
       } else {
-        toast.error(data.message || 'Failed to login');
+        toast.error(data.message || 'Failed to verify 2FA code');
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
+    } finally {
+      setIs2FAModalOpen(false);
     }
   };
 
@@ -41,7 +79,7 @@ export default function Home() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-900 to-black">
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-bold mb-8 text-center text-white">Login</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLoginSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-400">Email</label>
             <input
@@ -78,6 +116,7 @@ export default function Home() {
               )}
             </button>
           </div>
+
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -93,6 +132,14 @@ export default function Home() {
         </div>
       </div>
       <ToastContainer />
+
+      <TwoFactorModal
+        isOpen={is2FAModalOpen}
+        onClose={() => setIs2FAModalOpen(false)}
+        onSubmit={handle2FASubmit}
+        twoFactorToken={twoFactorToken}
+        setTwoFactorToken={setTwoFactorToken}
+      />
     </div>
   );
 }

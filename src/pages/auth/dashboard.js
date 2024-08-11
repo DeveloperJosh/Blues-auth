@@ -15,6 +15,9 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [twoFactorSecret, setTwoFactorSecret] = useState('');
+  const [isSettingUp2FA, setIsSettingUp2FA] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,6 +37,7 @@ export default function Dashboard() {
         .then((data) => {
           if (data) {
             setUser(data);
+            setTwoFactorEnabled(data.twoFactorEnabled);
           } else {
             toast.error('Failed to fetch user data');
           }
@@ -51,6 +55,60 @@ export default function Dashboard() {
     }, 1500);
   };
 
+  const setup2FA = () => {
+    setIsSettingUp2FA(true);
+    const token = localStorage.getItem('token');
+
+    fetch('/api/auth/2fa/enable', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ email: user.email }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.secret) {
+          setTwoFactorSecret(data.secret);
+          toast.success('2FA setup successful! Scan the QR code or enter the secret key in your authenticator app.');
+        } else {
+          toast.error('Failed to setup 2FA');
+        }
+        setIsSettingUp2FA(false);
+      })
+      .catch(() => {
+        toast.error('An unexpected error occurred');
+        setIsSettingUp2FA(false);
+      });
+  };
+
+  const disable2FA = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('/api/auth/2fa/disable', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ email: user.email }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.message === '2FA disabled') {
+          setTwoFactorEnabled(false);
+          setTwoFactorSecret('');
+          toast.success('2FA disabled successfully');
+        } else {
+          toast.error('Failed to disable 2FA');
+        }
+      })
+      .catch(() => {
+        toast.error('An unexpected error occurred');
+      });
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
@@ -58,7 +116,42 @@ export default function Dashboard() {
       case 'profile':
         return <div>Coming Soon</div>;
       case 'settings':
-        return <div>Coming Soon</div>;
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Settings</h2>
+            {twoFactorEnabled ? (
+              <div>
+                <p>Two-Factor Authentication is enabled.</p>
+                <button
+                  onClick={disable2FA}
+                  className="mt-4 bg-red-600 text-white px-4 py-2 rounded-md"
+                >
+                  Disable 2FA
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p>Two-Factor Authentication is not enabled.</p>
+                <button
+                  onClick={setup2FA}
+                  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md"
+                  disabled={isSettingUp2FA}
+                >
+                  {isSettingUp2FA ? 'Setting up 2FA...' : 'Enable 2FA'}
+                </button>
+                {twoFactorSecret && (
+                <div className="mt-4">
+                 <p>Secret Key:</p>
+                  <code>{twoFactorSecret}</code>
+                   <p className="text-sm text-gray-400">
+                    Enter this key in your authenticator app. Once you refresh the page, you will be able to disable 2FA, but you won't be able to see the secret key again.
+                   </p>
+                </div>
+               )}
+              </div>
+            )}
+          </div>
+        );
       default:
         return <div>Welcome to the Home section!</div>;
     }

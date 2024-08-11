@@ -1,6 +1,7 @@
 # To Do
 
-- Implement an authentication API that other pages can access using an API key.
+- Add SSO functionality for login and registration.
+- Add 2FA functionality.
 
 # Completed
 
@@ -9,3 +10,4 @@
 - Added forgot password page.
 - Added reset password functionality.
 - Added show/hide password feature.
+- Added Api key authentication for sso when added.
