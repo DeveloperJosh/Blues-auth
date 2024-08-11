@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const WebsiteSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     url: { type: String, required: true, unique: true },
-    token: { type: String, required: true, unique: true },
+    client_id: { type: String, required: true, unique: true },
+    client_secret: { type: String, required: true, unique: true },
     redirect: { type: String, required: true, unique: true }, 
     permission: { 
         type: String, 

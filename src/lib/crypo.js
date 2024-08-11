@@ -14,3 +14,7 @@ export async function comparePassword(password, hash) {
 export async function generateToken() {
     return crypto.randomBytes(20).toString('hex');
 }
+
+export async function generateId() {
+    return crypto.randomBytes(10).toString('hex');
+}

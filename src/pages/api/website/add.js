@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import Website from "@/models/Website";
 import User from "@/models/User";
-import { generateToken } from "@/lib/crypo";
+import { generateId, generateToken } from "@/lib/crypo";
 import { authenticate } from "@/lib/authMiddleware";
 
 export default async function handler(req, res) {
@@ -13,6 +13,8 @@ export default async function handler(req, res) {
         }
     
         const { url, redirect, email } = req.body;
+        const client_id = await generateId();
+        const client_secret = await generateToken();
 
         if (!url) {
             return res.status(400).json({ message: 'URL is required' });
@@ -36,7 +38,8 @@ export default async function handler(req, res) {
             const newWebsite = new Website({
                 email: email,
                 url,
-                token: await generateToken(),
+                client_id,
+                client_secret,
                 redirect: redirect,
                 permission: 'read',
             });
@@ -45,7 +48,10 @@ export default async function handler(req, res) {
             res.status(201).json({ message: 'Website added successfully', website: newWebsite });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Server error' });
+            if (error.code === 11000) {
+                return res.status(400).json({ message: 'Website already exists' });
+            }
+            return res.status(500).json({ message: 'Internal server error' });
         }
     });
 }
