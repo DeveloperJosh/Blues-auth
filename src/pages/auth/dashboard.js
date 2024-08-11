@@ -46,7 +46,7 @@ export default function Dashboard() {
           toast.error('An unexpected error occurred');
         });
     }
-  }, [router]);
+  }, [router, activeTab]); 
 
   const handleLogout = () => {
     toast.success('Logged out successfully!');
@@ -140,14 +140,14 @@ export default function Dashboard() {
                   {isSettingUp2FA ? 'Setting up 2FA...' : 'Enable 2FA'}
                 </button>
                 {twoFactorSecret && (
-                <div className="mt-4">
-                 <p>Secret Key:</p>
-                  <code>{twoFactorSecret}</code>
-                   <p className="text-sm text-gray-400">
-                    Enter this key in your authenticator app. Once you refresh the page, you will be able to disable 2FA, but you won't be able to see the secret key again.
-                   </p>
-                </div>
-               )}
+                  <div className="mt-4">
+                    <p>Secret Key:</p>
+                    <code>{twoFactorSecret}</code>
+                    <p className="text-sm text-gray-400">
+                      Enter this key in your authenticator app. Once you refresh the page, you will be able to disable 2FA, but you won't be able to see the secret key again.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
