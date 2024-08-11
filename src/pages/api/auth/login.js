@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   const { email, password, twoFactorToken } = req.body;
 
   try {
-    const user = await User.findOne({ email }).select('username email password twoFactorEnabled twoFactorSecret');
+    const user = await User.findOne({ email }).select('username email password twoFactorEnabled twoFactorSecret verified');
     console.log("User object:", user); // Log the user object to see all fields
 
     if (!user) {
@@ -25,6 +25,10 @@ export default async function handler(req, res) {
     const isMatch = await comparePassword(password.trim(), user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    if (!user.verified) {
+      return res.status(400).json({ message: 'Account not verified' });
     }
 
     if (user.twoFactorEnabled && !twoFactorToken) {

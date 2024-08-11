@@ -1,7 +1,7 @@
 // password encryption and decryption
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import speakeasy from 'speakeasy';
+import node2fa from 'node-2fa';
 
 export async function encryptPassword(password) {
     const salt = await bcrypt.genSalt(10);
@@ -20,15 +20,13 @@ export async function generateId() {
     return crypto.randomBytes(10).toString('hex');
 }
 
-export const generateTwoFactorSecret = () => {
-    const secret = speakeasy.generateSecret();
-    return secret.base32;
-  };
+export const generateTwoFactorSecret = (email) => {
+    const newSecret = node2fa.generateSecret( { name: 'Blue Auth', account: email } );
+    console.log('2FA Secret:', newSecret.secret );
+    return newSecret.secret;
+};
 
 export const verifyTwoFactorCode = (user, token) => {
-    return speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: token,
-    });
-  };
+    const result = node2fa.verifyToken(user.twoFactorSecret, token);
+    return result && result.delta === 0; // Returns true if the token is valid
+};
