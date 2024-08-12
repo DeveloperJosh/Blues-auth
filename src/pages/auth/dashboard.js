@@ -45,7 +45,7 @@ export default function Dashboard() {
         })
         .catch((err) => {
           toast.error(err.message);
-          router.push('/');
+          return router.push('/');
         });
     }
   }, [router]);
