@@ -26,27 +26,29 @@ export default function Dashboard() {
       toast.error('You need to log in first');
       router.push('/');
     } else {
-      // Fetch user data
       fetch('/api/user/me', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data) {
-            setUser(data);
-            setTwoFactorEnabled(data.twoFactorEnabled);
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
           } else {
-            toast.error('Failed to fetch user data');
+            throw new Error('Failed to fetch user data');
           }
         })
-        .catch(() => {
-          toast.error('An unexpected error occurred');
+        .then((data) => {
+          setUser(data);
+          setTwoFactorEnabled(data.twoFactorEnabled);
+        })
+        .catch((err) => {
+          toast.error(err.message);
+          router.push('/');
         });
     }
-  }, [router, activeTab]);
+  }, [router]);
 
   const handleLogout = () => {
     toast.success('Logged out successfully!');
