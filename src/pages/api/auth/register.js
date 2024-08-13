@@ -1,7 +1,7 @@
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import Verify from '@/models/Verify';
-import { encryptPassword, generateToken } from '@/lib/crypo';
+import { encryptPassword, generateToken } from '@/lib/crypto';
 import sendEmail from '@/lib/Email';
 
 export default async function handler(req, res) {

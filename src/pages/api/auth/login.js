@@ -1,7 +1,7 @@
 import dbConnect from '../../../lib/dbConnect';
 import User from '../../../models/User';
 import jwt from 'jsonwebtoken';
-import { comparePassword, verifyTwoFactorCode } from '../../../lib/crypo';
+import { comparePassword, verifyTwoFactorCode } from '../../../lib/crypto';
 import sendEmail from '@/lib/Email';
 import useragent from 'useragent';
 

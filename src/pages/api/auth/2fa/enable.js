@@ -1,7 +1,7 @@
 import User from "@/models/User";
 import { authenticate } from "@/lib/authMiddleware";
 import dbConnect from "@/lib/dbConnect";
-import { generateTwoFactorSecret } from "@/lib/crypo";
+import { generateTwoFactorSecret } from "@/lib/crypto";
 import { checkPermission } from "@/lib/permissionMiddleware";
 
 export default async function enableTwoFactorHandler(req, res) {

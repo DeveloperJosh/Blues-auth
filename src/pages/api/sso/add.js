@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import Website from "@/models/Website";
 import User from "@/models/User";
-import { generateId, generateToken } from "@/lib/crypo";
+import { generateId, generateToken } from "@/lib/crypto";
 import { authenticate } from "@/lib/authMiddleware";
 import sendEmail from "@/lib/Email";
 
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
             return res.status(405).end(); // Method Not Allowed
         }
     
-        const { url, redirect } = req.body;
+        const { name, description, url, redirect } = req.body;
         const client_id = await generateId();
         const client_secret = await generateToken();
         const user = await User.findById(req.user._id).select('username email');
@@ -30,6 +30,8 @@ export default async function handler(req, res) {
 
             const newWebsite = new Website({
                 email: user.email,
+                name,
+                description,
                 url,
                 client_id,
                 client_secret,
@@ -42,7 +44,7 @@ export default async function handler(req, res) {
             sendEmail(
                 user.email,
                 "Website Added",
-                `<p>Hello ${user.username},</p><p>Your website has been added successfully. Here are your client credentials:</p><p>Client ID: ${client_id}</p><p>Client Secret: ${client_secret}</p><p>Redirect URL: ${redirect}</p>`,
+                `<p>Hello ${user.username},</p><p>Your add(${name}) has been added successfully. Here are your client credentials:</p><p>Client ID: ${client_id}</p><p>Client Secret: ${client_secret}</p><p>Redirect URL: ${redirect}</p>`,
             )
         } catch (error) {
             console.error(error);

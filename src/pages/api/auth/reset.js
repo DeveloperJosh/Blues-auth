@@ -1,7 +1,7 @@
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import Forget from '@/models/Forget';
-import { encryptPassword } from '@/lib/crypo';
+import { encryptPassword } from '@/lib/crypto';
 import sendEmail from '@/lib/Email';
 
 export default async function handler(req, res) {

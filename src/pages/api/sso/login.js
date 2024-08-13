@@ -2,7 +2,7 @@ import dbConnect from '@/lib/dbConnect';
 import Website from '@/models/Website';
 import User from '@/models/User';
 import jwt from 'jsonwebtoken';
-import { comparePassword, verifyTwoFactorCode } from '@/lib/crypo';
+import { comparePassword, verifyTwoFactorCode } from '@/lib/crypto';
 import sendEmail from '@/lib/Email';
 import useragent from 'useragent';
 
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
         await sendEmail(
             email, 
             "Login Notification", 
-            `New Login Detected<br><br>Device: ${deviceInfo}<br><br>IP Address: ${ipAddress}<br><br>You authenticated with ${website.url}`
+            `New Login Detected<br><br>Device: ${deviceInfo}<br><br>IP Address: ${ipAddress}<br><br>You authenticated with ${website.name}`
         );
 
         const redirectUrl = `${callback_url}?token=${token}`;
