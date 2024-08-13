@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,6 +12,7 @@ export default function Setup() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        console.log(token);
 
         if (!token) {
             toast.error('You need to log in first');
@@ -20,20 +20,32 @@ export default function Setup() {
             return;
         }
 
-        // make a request to the /user/me endpoint
+        // Make a request to the /user/me endpoint via the proxy
         if (token) {
-            axios.get('/api/user/me', {
+            fetch('/api/proxy', {
+                method: 'POST',
                 headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            }).then((res) => {
-                console.log(res.data);
-            }).catch((err) => {
-                console.log(err);
-                toast.error('Invalid token. Please log in again.');
-                localStorage.removeItem('token');
-                router.push('/');
-            });
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    endpoint: '/user/me',
+                    token, // passing the token for the proxy to use
+                    data: {},
+                }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.error) {
+                        throw new Error(data.message);
+                    }
+                    console.log(data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    toast.error('Invalid token. Please log in again.');
+                    localStorage.removeItem('token');
+                    router.push('/');
+                });
         }
     }, [router]);
 
@@ -45,13 +57,13 @@ export default function Setup() {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.post('/api/sso/add', {
-                url,
-                redirect,
-            }, {
+            const response = await fetch('/api/sso/add', {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ url, redirect }),
             });
 
             if (response.status === 201) {

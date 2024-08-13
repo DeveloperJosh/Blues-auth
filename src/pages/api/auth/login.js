@@ -16,7 +16,6 @@ export default async function handler(req, res) {
 
   try {
     const user = await User.findOne({ email }).select('username email password twoFactorEnabled twoFactorSecret verified');
-    console.log("User object:", user); // Log the user object to see all fields
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -32,7 +31,6 @@ export default async function handler(req, res) {
     }
 
     if (user.twoFactorEnabled && !twoFactorToken) {
-      console.log("2FA is enabled but no token provided"); // Log if 2FA is required but token is missing
       return res.status(200).json({ requires2FA: true });
     }
     
@@ -42,12 +40,10 @@ export default async function handler(req, res) {
       }
     }
 
-    console.log("JWT Payload:", { userId: user._id, username: user.username, twoFactorEnabled: user.twoFactorEnabled }); // Log the JWT payload
-
     const token = jwt.sign(
       { userId: user._id, username: user.username, twoFactorEnabled: user.twoFactorEnabled },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '24h' }
     );
 
     const agent = useragent.parse(req.headers['user-agent']);

@@ -1,9 +1,11 @@
 import User from "@/models/User";
 import { authenticate } from "@/lib/authMiddleware";
+import { checkPermission } from "@/lib/permissionMiddleware";
 import dbConnect from "@/lib/dbConnect";
 
 export default async function disableTwoFactorHandler(req, res) {
   await authenticate(req, res, async () => {
+   await checkPermission('write')(req, res, async () => {
     await dbConnect();
   
     if (req.method !== 'POST') {
@@ -29,4 +31,5 @@ export default async function disableTwoFactorHandler(req, res) {
       res.status(500).json({ message: 'An error occurred while disabling 2FA.' });
     }
   });
+ });
 }

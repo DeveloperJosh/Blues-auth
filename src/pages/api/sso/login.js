@@ -15,8 +15,6 @@ export default async function handler(req, res) {
 
     const { email, password, twoFactorToken, callback_url, client_id, client_secret } = req.body;
 
-    console.log("Incoming request body:", req.body);
-
     try {
         if (!client_id || !client_secret || !callback_url) {
             console.error('Missing client_id, client_secret, or callback_url');
@@ -61,7 +59,7 @@ export default async function handler(req, res) {
         const token = jwt.sign(
             { userId: user._id, username: user.username, twoFactorEnabled: user.twoFactorEnabled },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '24h' }
         );
 
         const agent = useragent.parse(req.headers['user-agent']);

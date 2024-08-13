@@ -33,8 +33,6 @@ export default async function handler(req, res) {
       twoFactorEnabled: false,
     };
 
-    console.log("User object:", user); // Log the user object to see all fields
-
     const newUser = new User({
       ...user,
     });

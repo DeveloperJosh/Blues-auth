@@ -10,9 +10,11 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { Transition } from '@headlessui/react';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state
   const [activeTab, setActiveTab] = useState('home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
@@ -27,26 +29,31 @@ export default function Dashboard() {
       toast.error('You need to log in first');
       router.push('/');
     } else {
-      fetch('/api/user/me', {
+      setLoading(true); // Start loading
+      fetch('/api/proxy', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          endpoint: '/user/me',
+          token,
+          data: {},
+        }),
       })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            throw new Error('Failed to fetch user data');
-          }
-        })
+        .then((res) => res.json())
         .then((data) => {
+          if (data.error) {
+            throw new Error(data.message);
+          }
           setUser(data);
           setTwoFactorEnabled(data.twoFactorEnabled);
+          setLoading(false); // Stop loading
         })
         .catch((err) => {
           toast.error(err.message);
-          return router.push('/');
+          setLoading(false); // Stop loading on error
+          router.push('/');
         });
     }
   }, [router]);
@@ -62,13 +69,16 @@ export default function Dashboard() {
     setIsSettingUp2FA(true);
     const token = localStorage.getItem('token');
 
-    fetch('/api/auth/2fa/enable', {
+    fetch('/api/proxy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ email: user.email }),
+      body: JSON.stringify({
+        endpoint: '/auth/2fa/enable',
+        token,
+        email: user.email,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -91,13 +101,16 @@ export default function Dashboard() {
   const disable2FA = () => {
     const token = localStorage.getItem('token');
 
-    fetch('/api/auth/2fa/disable', {
+    fetch('/api/proxy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ email: user.email }),
+      body: JSON.stringify({
+        endpoint: '/auth/2fa/disable',
+        token,
+        email: user.email,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -248,13 +261,36 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 p-6">
-        <h1 className="text-3xl font-bold">
-          Welcome, {user?.username || 'User'}!
-        </h1>
-        <p className="mt-4">
-          Welcome to the dashboard! Here you can manage your account settings.
-        </p>
-        <div className="mt-8">{renderContent()}</div>
+        <Transition
+          as="div" // Render as a div instead of a Fragment
+          show={loading}
+          enter="transition-opacity duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          {loading && (
+            <div className="flex justify-center items-center h-full">
+              <div className="absolute inset-0 flex justify-center items-center">
+                <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent border-t-4 border-t-solid rounded-full animate-spin"></div>
+              </div>
+            </div>
+          )}
+        </Transition>
+
+        {!loading && (
+          <>
+            <h1 className="text-3xl font-bold">
+              Welcome, {user?.username || 'User'}!
+            </h1>
+            <p className="mt-4">
+              Welcome to the dashboard! Here you can manage your account settings.
+            </p>
+            <div className="mt-8">{renderContent()}</div>
+          </>
+        )}
       </main>
       <ToastContainer />
     </div>

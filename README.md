@@ -19,3 +19,31 @@
 # How do i use sso on my application?
 
 Just head over to the [documentation](https://github.com/DeveloperJosh/Blues-auth-sso/blob/main/README.md)
+
+# Cloning the repository
+
+```bash
+git clone https://github.com/DeveloperJosh/Blues-auth.git 
+```
+
+# Making .env file
+
+```plaintext
+MONGODB_URI="mongodb://localhost:27017/Blues-auth"
+JWT_SECRET="secret"
+EMAIL_USER="your-email"
+EMAIL_PASS="your-password"
+EMAIL_HOST="smtp.hostinger.com"
+EMAIL_PORT=465
+NEXT_PUBLIC_INTERNAL_SECRET_TOKEN="secret"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+```
+
+# Running the application
+
+```bash
+cd Blues-auth
+npm install
+npm start
+```
+

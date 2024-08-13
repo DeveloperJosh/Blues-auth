@@ -6,12 +6,12 @@ const WebsiteSchema = new mongoose.Schema({
     client_id: { type: String, required: true, unique: true },
     client_secret: { type: String, required: true, unique: true },
     redirect: { type: String, required: true, unique: true }, 
-    permission: { 
-        type: String, 
+    permissions: { 
+        type: [String], 
         required: true, 
         enum: ['read', 'write', 'delete'], 
-        default: 'read'
-     }, 
+        default: ['read']
+    }
 });
 
 export default mongoose.models.Website || mongoose.model('Website', WebsiteSchema);
