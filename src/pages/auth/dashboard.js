@@ -114,11 +114,12 @@ export default function Dashboard() {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.message === '2FA disabled') {
+        if (data.staus === 'success') {
           setTwoFactorEnabled(false);
           setTwoFactorSecret('');
           toast.success('2FA disabled successfully');
         } else {
+          console.log(data);
           toast.error('Failed to disable 2FA');
         }
       })

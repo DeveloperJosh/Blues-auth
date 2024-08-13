@@ -25,7 +25,7 @@ export default async function disableTwoFactorHandler(req, res) {
       user.twoFactorSecret = null;
       await user.save();
   
-      res.status(200).json({ message: 'Two-factor authentication has been disabled successfully.' });
+      res.status(200).json({ message: 'Two-factor authentication has been disabled successfully.', staus: 'success' });
     } catch (error) {
       console.error('2FA disable error:', error);
       res.status(500).json({ message: 'An error occurred while disabling 2FA.' });
