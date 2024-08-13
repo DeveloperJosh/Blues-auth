@@ -11,7 +11,7 @@ export default function SSOLogin() {
     const [loading, setLoading] = useState(false);
     const [requires2FA, setRequires2FA] = useState(false);
     const router = useRouter();
-    const { client_id, callback_url, client_secret } = router.query;
+    const { client_id, callback_url } = router.query;
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,7 +24,6 @@ export default function SSOLogin() {
                 twoFactorToken, // This might be empty if 2FA is not required
                 callback_url,
                 client_id,
-                client_secret,
             });
     
             if (response.status === 200 && response.data.requires2FA) {

@@ -1,13 +1,12 @@
 import dbConnect from './dbConnect';
 import Website from '../models/Website';
-//import dotenv from 'dotenv';
-//dotenv.config();
 
 export const checkPermission = (requiredPermission) => {
   return async (req, res, next) => {
     await dbConnect();
 
-    const { client_id, client_secret } = req.body;
+    const { client_id } = req.body; // Getting client_id from the body
+    const client_secret = req.headers['x-client-secret'];
     const internalToken = req.headers['x-internal-token'];
 
     try {
@@ -30,12 +29,9 @@ export const checkPermission = (requiredPermission) => {
       }
 
       req.website = website;
-      if (typeof next === 'function') {
-        return next();
-      } else {
-        return res.status(500).json({ message: 'Unexpected behavior: next is not a function' });
-      }
+      return next();
     } catch (error) {
+      console.error('Error checking permissions:', error);
       res.status(500).json({ message: 'Server error' });
     }
   };

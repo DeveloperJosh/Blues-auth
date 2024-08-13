@@ -13,15 +13,15 @@ export default async function handler(req, res) {
         return res.status(405).end(); // Method Not Allowed
     }
 
-    const { email, password, twoFactorToken, callback_url, client_id, client_secret } = req.body;
+    const { email, password, twoFactorToken, callback_url, client_id } = req.body;
 
     try {
-        if (!client_id || !client_secret || !callback_url) {
+        if (!client_id || !callback_url) {
             console.error('Missing client_id, client_secret, or callback_url');
             return res.status(400).json({ message: 'Missing client_id, client_secret, or callback_url' });
         }
 
-        const website = await Website.findOne({ client_id, client_secret });
+        const website = await Website.findOne({ client_id });
         if (!website) {
             console.error('Invalid client credentials');
             return res.status(401).json({ message: 'Invalid client credentials' });
