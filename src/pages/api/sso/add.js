@@ -3,6 +3,7 @@ import Website from "@/models/Website";
 import User from "@/models/User";
 import { generateId, generateToken } from "@/lib/crypo";
 import { authenticate } from "@/lib/authMiddleware";
+import sendEmail from "@/lib/Email";
 
 export default async function handler(req, res) {
     await authenticate(req, res, async () => {
@@ -12,9 +13,10 @@ export default async function handler(req, res) {
             return res.status(405).end(); // Method Not Allowed
         }
     
-        const { url, redirect, email } = req.body;
+        const { url, redirect } = req.body;
         const client_id = await generateId();
         const client_secret = await generateToken();
+        const user = await User.findById(req.user._id).select('username email');
 
         if (!url) {
             return res.status(400).json({ message: 'URL is required' });
@@ -24,19 +26,10 @@ export default async function handler(req, res) {
             return res.status(400).json({ message: 'Redirect URL is required' });
         }
 
-        if (!email) {
-            return res.status(400).json({ message: 'Email is required' });
-        }
-
         try {
 
-            const user = await User.findOne({ email });
-            if (!user) {
-                return res.status(400).json({ message: 'User not found' });
-            }
-
             const newWebsite = new Website({
-                email: email,
+                email: user.email,
                 url,
                 client_id,
                 client_secret,
@@ -46,6 +39,11 @@ export default async function handler(req, res) {
 
             await newWebsite.save();
             res.status(201).json({ message: 'Website added successfully', website: newWebsite });
+            sendEmail(
+                user.email,
+                "Website Added",
+                `<p>Hello ${user.username},</p><p>Your website has been added successfully. Here are your client credentials:</p><p>Client ID: ${client_id}</p><p>Client Secret: ${client_secret}</p><p>Redirect URL: ${redirect}</p>`,
+            )
         } catch (error) {
             console.error(error);
             if (error.code === 11000) {

@@ -22,6 +22,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+
     if (!token) {
       toast.error('You need to log in first');
       router.push('/');
@@ -113,10 +114,24 @@ export default function Dashboard() {
       });
   };
 
+  const handleSetupRedirect = () => {
+    router.push('/auth/setup');
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <div>Welcome to the Home section!</div>;
+        return (
+          <div>
+            <div>Welcome to the Home section!</div>
+            <button
+              onClick={handleSetupRedirect}
+              className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
+            >
+              Create New Application
+            </button>
+          </div>
+        );
       case 'profile':
         return (
           <div>

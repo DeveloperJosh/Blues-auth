@@ -19,6 +19,11 @@ export const authenticate = async (req, res, next) => {
     // Find the user in the database
     req.user = await User.findById(decoded.userId).select('username email twoFactorEnabled');
 
+    // if token expired
+    if (decoded.exp < Date.now() / 1000) {
+      return res.status(401).json({ message: 'Token expired' });
+    }
+
     if (!req.user) {
       return res.status(401).json({ message: 'User not found' });
     }

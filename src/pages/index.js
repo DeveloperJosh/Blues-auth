@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import TwoFactorModal from '@/components/TwoFactorModal';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default function Home() {
   const [email, setEmail] = useState('');
