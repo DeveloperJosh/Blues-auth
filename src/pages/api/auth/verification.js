@@ -2,15 +2,18 @@ import User from "@/models/User";
 import Verify from "@/models/Verify";
 import dbConnect from '@/lib/dbConnect';
 import sendEmail from "@/lib/Email";
+import { log } from "@/lib/logs";
 
 export default async function handler(req, res) {
     await dbConnect();
     
-    if (req.method !== 'POST') {  // Use POST instead of GET for security when handling tokens
+    if (req.method !== 'POST') {  
         return res.status(405).end(); // Method Not Allowed
     }
     
     const { token } = req.body;
+    
+    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     
     try {
         const verification = await Verify.findOne({ token });
@@ -20,10 +23,12 @@ export default async function handler(req, res) {
 
         const user = await User.findOne({ email: verification.email });
         if (!user) {
+            await log('verify_failed', verification.email, ipAddress, 'User not found');
             return res.status(400).json({ message: 'User not found' });
         }
 
         if (user.verified) {
+            await log('verify_failed', user.email, ipAddress, 'Account already verified');
             return res.status(400).json({ message: 'Account already verified' });
         }
 
@@ -34,7 +39,8 @@ export default async function handler(req, res) {
 
         res.status(200).json({ message: 'Account verified successfully' });
 
-        // Send verification confirmation email asynchronously
+        await log('verify', user.email, ipAddress, 'Account verified');
+
         sendEmail(
             user.email,
             "Account Verified",

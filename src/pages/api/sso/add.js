@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { generateId, generateToken } from "@/lib/crypto";
 import { authenticate } from "@/lib/authMiddleware";
 import sendEmail from "@/lib/Email";
+import { log } from "@/lib/logs";
 
 export default async function handler(req, res) {
     await authenticate(req, res, async () => {
@@ -41,6 +42,10 @@ export default async function handler(req, res) {
 
             await newWebsite.save();
             res.status(201).json({ message: 'Website added successfully', website: newWebsite });
+
+            const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            await log('sso_add', user.email, ipAddress);
+
             sendEmail(
                 user.email,
                 "Website Added",

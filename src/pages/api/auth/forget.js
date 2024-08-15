@@ -3,9 +3,11 @@ import User from '@/models/User';
 import Forget from '@/models/Forget';
 import sendEmail from '@/lib/Email';
 import dbConnect from '@/lib/dbConnect';
+import { log } from '@/lib/logs';
 
 export default async function handler(req, res) {
     await dbConnect();
+    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     if (req.method !== 'POST') {
         return res.status(405).end(); // Method Not Allowed
@@ -16,6 +18,7 @@ export default async function handler(req, res) {
     try {
         const user = await User.findOne({ email });
         if (!user) {
+            await log('no_user', email, ipAddress, 'Password reset requested, but user not found');
             return res.status(400).json({ message: 'User not found' });
         }
 
@@ -36,13 +39,15 @@ export default async function handler(req, res) {
         const newForget = new Forget(forget);
         await newForget.save();
 
+        res.status(200).json({ message: 'Email sent successfully' });
+
+        await log('forgotten_password', user.email, ipAddress, 'Password reset requested');
+
         await sendEmail(
             user.email,
             'Reset your password',
             `<p>You requested to reset your password. Click the link below to reset it.</p><p><a href="https://auth.blue-dev.xyz/auth/reset-password/${token}">Reset Password</a></p>`,
         );
-
-        res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Server error' });

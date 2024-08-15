@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { comparePassword, verifyTwoFactorCode } from '@/lib/crypto';
 import sendEmail from '@/lib/Email';
 import useragent from 'useragent';
+import { log } from '@/lib/logs';
 
 export default async function handler(req, res) {
     await dbConnect();
@@ -65,6 +66,8 @@ export default async function handler(req, res) {
         const agent = useragent.parse(req.headers['user-agent']);
         const deviceInfo = `${agent.family} on ${agent.os.family}`;
         const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        await log('sso_login', user.email, ipAddress);
 
         await sendEmail(
             email, 

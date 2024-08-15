@@ -3,6 +3,7 @@ import User from '@/models/User';
 import Verify from '@/models/Verify';
 import { encryptPassword, generateToken } from '@/lib/crypto';
 import sendEmail from '@/lib/Email';
+import { log } from '@/lib/logs';
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -12,6 +13,7 @@ export default async function handler(req, res) {
   }
 
   const { username, email, password } = req.body;
+  const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
   try {
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -47,8 +49,9 @@ export default async function handler(req, res) {
 
     await verificationEntry.save();
 
-    console.log(newUser); // Log the new user object to see all fields
     res.status(201).json({ message: 'User registered successfully' });
+
+    await log('register', newUser.email, ipAddress, 'User registered successfully');
 
     await sendEmail(
         email,

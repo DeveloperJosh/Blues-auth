@@ -1,5 +1,6 @@
 import dbConnect from './dbConnect';
 import Website from '../models/Website';
+import { log } from './logs';
 
 export const checkPermission = (requiredPermission) => {
   return async (req, res, next) => {
@@ -28,6 +29,7 @@ export const checkPermission = (requiredPermission) => {
         return res.status(403).json({ message: `Permission '${requiredPermission}' not allowed` });
       }
 
+      await log('permission_check', website.client_id, req.headers['x-forwarded-for'] || req.connection.remoteAddress);
       req.website = website;
       return next();
     } catch (error) {

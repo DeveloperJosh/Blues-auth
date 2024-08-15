@@ -2,7 +2,6 @@
 
 export default async function handler(req, res) {
   const { method, body, headers } = req;
-  console.log('Request body:', body);
 
   if (method !== 'POST') {
     return res.status(405).end(); // Method Not Allowed

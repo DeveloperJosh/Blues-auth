@@ -1,10 +1,16 @@
-# To Do
+# To Do.
 
-- Implement OAuth2 for third-party login providers: Add support for logging in with Google, Facebook, GitHub, etc.
-- Implement audit logs for security-sensitive actions: Track and log actions like account deletions, role changes, and 2FA setups for security audits.
 - Add a terms of service and privacy policy: Create and enforce terms of service and privacy policy pages.
 
-# Completed
+# Working on.
+
+- Implement audit logs for security-sensitive actions: Track and log actions like account deletions, role changes, and 2FA setups for security audits.
+
+# Dropped for now.
+
+- Implement OAuth2 for third-party login providers: Add support for logging in with Google, Facebook, GitHub, etc.
+
+# Completed.
 
 - Added login page.
 - Added registration page.
