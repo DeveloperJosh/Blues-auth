@@ -23,7 +23,8 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${body.token}`,
+        'Origin': `${process.env.NEXT_PUBLIC_BASE_URL}`,
+        'Authorization': `Bearer ${body.token}`,
         'X-Internal-Token': process.env.NEXT_PUBLIC_INTERNAL_SECRET_TOKEN,
       },
       body: JSON.stringify(body),
